@@ -32,8 +32,31 @@ async function run() {
 
     //   const allBookings = client.db("Hotel_Management").collection("bookings");
 
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      console.log(email);
+
+      const result = await allUsers.findOne(query);
+      res.send(result);
+    });
+
+    app.get("/users", async (req, res) => {
+      const result = await allUsers.find().toArray();
+      res.send(result);
+    });
+
     app.get("/Appointments", async (req, res) => {
       const result = await allAppointment.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/Appointments/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { userEmail: email };
+      console.log(email);
+
+      const result = await allAppointment.find(query).toArray();
       res.send(result);
     });
 
@@ -45,35 +68,37 @@ async function run() {
       res.send(result);
     });
 
-    //   app.put("/bookings/:id", async (req, res) => {
-    //     const id = req.params.id;
-    //     const Status = req.body;
-    //     console.log(updateStatus, id);
+    app.post("/appointment", async (req, res) => {
+      const appointment = req.body;
+      console.log(appointment);
 
-    //     const filter = { _id: new ObjectId(id) };
+      const result = await allAppointment.insertOne(appointment);
+      res.send(result);
+    });
 
-    //     const option = { upsert: true };
-    //     const updateStatus = {
-    //       $set: {
-    //         status: Status.status,
-    //       },
-    //     };
+    app.put("/Appointments/:id", async (req, res) => {
+      const id = req.params.id;
+      const Status = req.body;
+      console.log(Status, id);
 
-    //     const result = await orderCollection.updateOne(
-    //       filter,
-    //       updateStatus,
-    //       option
-    //     );
-    //     res.send(result);
-    //   });
+      const filter = { _id: new ObjectId(id) };
 
-    //   app.delete("/alltoys/:id", async (req, res) => {
-    //     const id = req.params.id;
-    //     // console.log(id);
-    //     const query = { _id: new ObjectId(id) };
-    //     const result = await alltoysCollection.deleteOne(query);
-    //     res.send(result);
-    //   });
+      const option = { upsert: true };
+      const updateStatus = {
+        $set: {
+          status: Status.status,
+        },
+      };
+
+      const result = await allAppointment.updateOne(
+        filter,
+        updateStatus,
+        option
+      );
+      res.send(result);
+    });
+
+    //
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
